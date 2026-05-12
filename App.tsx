@@ -39,7 +39,11 @@ export default function App() {
           headerTitleStyle: { fontFamily: APP_FONT_FAMILY, fontSize: 22 },
         }}
       >
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: "ASG Team Balancer" }} />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ title: "ASG Team Balancer" }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

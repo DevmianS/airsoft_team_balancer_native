@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "airsoft_team_balancer_native",
-    "slug": "airsoft_team_balancer_native",
+    "name": "Airsoft Team Balancer",
+    "slug": "airsoft-team-balancer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

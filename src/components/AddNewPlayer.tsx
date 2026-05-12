@@ -7,6 +7,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import PlayerClassType from "../types/playerClassType";
 import PlayerType from "../types/playerType";
 import ClassIcon from "./ClassIcon";
@@ -75,9 +76,11 @@ export default function AddNewPlayer({
           />
           <View style={styles.actions}>
             <Pressable style={[styles.actionButton, styles.cancelButton]} onPress={onClose}>
+              <MaterialIcons name="close" size={18} color="#FFFFFF" />
               <Text style={styles.actionText}>Cancel</Text>
             </Pressable>
             <Pressable style={[styles.actionButton, styles.addButton]} onPress={addPlayerButtonHandler}>
+              <MaterialIcons name="person-add" size={18} color="#FFFFFF" />
               <Text style={styles.actionText}>Add</Text>
             </Pressable>
           </View>
@@ -168,6 +171,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   cancelButton: {
     backgroundColor: "#6B7280",

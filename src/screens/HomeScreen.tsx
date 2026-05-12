@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AddNewPlayer from "../components/AddNewPlayer";
 import PlayerCard from "../components/PlayerCard";
@@ -143,18 +144,27 @@ export default function HomeScreen() {
 
             {allPlayers.length > 0 && (
               <Pressable style={styles.deleteAllFab} onPress={onDeleteAll}>
-                <Text style={styles.fabLabel}>DELETE ALL</Text>
+                <View style={styles.fabContent}>
+                  <MaterialIcons name="delete-forever" size={22} color="#FFFFFF" />
+                  <Text style={styles.fabLabel}>DELETE ALL</Text>
+                </View>
               </Pressable>
             )}
 
             {enabledPlayersCount > 0 && allPlayers.length > 1 && (
               <Pressable style={[styles.mainFab, styles.createTeamsFab]} onPress={onCreateTeams}>
-                <Text style={styles.fabLabel}>CREATE TEAMS</Text>
+                <View style={styles.fabContent}>
+                  <MaterialIcons name="shuffle" size={20} color="#FFFFFF" />
+                  <Text style={styles.fabLabel}>CREATE TEAMS</Text>
+                </View>
               </Pressable>
             )}
 
             <Pressable style={[styles.mainFab, styles.addPlayerFab]} onPress={() => setShowAddModal(true)}>
-              <Text style={styles.fabLabel}>ADD NEW</Text>
+              <View style={styles.fabContent}>
+                <MaterialIcons name="person-add" size={20} color="#FFFFFF" />
+                <Text style={styles.fabLabel}>ADD NEW</Text>
+              </View>
             </Pressable>
           </>
         ) : (
@@ -194,7 +204,10 @@ export default function HomeScreen() {
             </View>
 
             <Pressable style={[styles.mainFab, styles.playersFab]} onPress={() => setIsRandomized(false)}>
-              <Text style={styles.fabLabel}>PLAYERS</Text>
+              <View style={styles.fabContent}>
+                <MaterialIcons name="groups" size={20} color="#FFFFFF" />
+                <Text style={styles.fabLabel}>PLAYERS</Text>
+              </View>
             </Pressable>
           </>
         )}
@@ -300,6 +313,11 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     textAlign: "center",
     fontFamily: APP_FONT_FAMILY,
+  },
+  fabContent: {
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 2,
   },
   teamsSplit: {
     flex: 1,

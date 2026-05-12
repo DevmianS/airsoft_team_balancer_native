@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import PlayerType from "../types/playerType";
 import PlayerClassType from "../types/playerClassType";
 import ClassSelectionModal from "./ClassSelectionModal";
@@ -63,15 +64,22 @@ export default function PlayerCard({
         {!disableActions && showModifyButtons && (
           <View style={styles.buttonRow}>
             <Pressable style={[styles.actionButton, styles.classButton]} onPress={() => setShowClassModal(true)}>
+              <MaterialIcons name="autorenew" size={16} color="#FFFFFF" />
               <Text style={styles.actionButtonText}>CLASS</Text>
             </Pressable>
             <Pressable
               style={[styles.actionButton, styles.disableButton]}
               onPress={() => onToggleDisabled?.(player.id)}
             >
+              <MaterialIcons
+                name={player.disabled ? "visibility" : "visibility-off"}
+                size={16}
+                color="#FFFFFF"
+              />
               <Text style={styles.actionButtonText}>{player.disabled ? "ENABLE" : "DISABLE"}</Text>
             </Pressable>
             <Pressable style={[styles.actionButton, styles.deleteButton]} onPress={() => onDelete?.(player.id)}>
+              <MaterialIcons name="delete" size={16} color="#FFFFFF" />
               <Text style={styles.actionButtonText}>DELETE</Text>
             </Pressable>
           </View>
@@ -171,6 +179,7 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     alignItems: "center",
     justifyContent: "center",
+    gap: 2,
   },
   classButton: {
     backgroundColor: "#2563EB",
