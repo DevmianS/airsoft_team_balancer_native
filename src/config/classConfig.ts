@@ -6,24 +6,22 @@ interface ClassConfig {
   terroristIcon?: string;
 }
 
-// Source web image assets are not present in this repository snapshot,
-// so mobile uses emoji placeholders for class visuals.
 export const CLASS_CONFIG: Record<PlayerClassType, ClassConfig> = {
   Machinegunner: {
     points: 40,
-    icon: "💥",
+    icon: "/icons/mg.webp",
   },
   Rifleman: {
     points: 35,
-    icon: "🔫",
-    terroristIcon: "🟥",
+    icon: "/icons/m4.webp",
+    terroristIcon: "/icons/ak47.webp",
   },
   Sniper: {
     points: 30,
-    icon: "🎯",
+    icon: "/icons/sniper.webp",
   },
   Sidearm: {
     points: 20,
-    icon: "🫡",
+    icon: "/icons/pistol.webp",
   },
 };

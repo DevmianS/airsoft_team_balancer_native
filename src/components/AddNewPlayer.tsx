@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import PlayerClassType from "../types/playerClassType";
 import PlayerType from "../types/playerType";
-import { CLASS_CONFIG } from "../config/classConfig";
+import ClassIcon from "./ClassIcon";
+import { APP_FONT_FAMILY } from "../config/fonts";
 
 interface Props {
   visible: boolean;
@@ -46,7 +47,8 @@ export default function AddNewPlayer({
       <View style={styles.overlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         <View style={styles.card}>
-          <Text style={styles.title}>Add new player</Text>
+          <Text style={styles.title}>ADD NEW PLAYER</Text>
+          <Text style={styles.subtitle}>Choose class and optional nickname</Text>
           <View style={styles.classesWrap}>
             {Object.values(PlayerClassType).map((classType) => {
               const selected = selectedClass === classType;
@@ -56,7 +58,9 @@ export default function AddNewPlayer({
                   style={[styles.classButton, selected && styles.selectedClassButton]}
                   onPress={() => setSelectedClass(classType)}
                 >
-                  <Text style={styles.classEmoji}>{CLASS_CONFIG[classType].icon}</Text>
+                  <View style={styles.classIconWrap}>
+                    <ClassIcon classType={classType} size={36} />
+                  </View>
                   <Text style={styles.classText}>{classType}</Text>
                 </Pressable>
               );
@@ -94,15 +98,24 @@ const styles = StyleSheet.create({
   card: {
     width: "100%",
     maxWidth: 500,
-    borderRadius: 14,
+    borderRadius: 16,
     backgroundColor: "#1F2937",
-    padding: 16,
-    gap: 14,
+    padding: 18,
+    gap: 12,
+    borderWidth: 1,
+    borderColor: "#374151",
   },
   title: {
     color: "#F9FAFB",
-    fontSize: 22,
-    fontWeight: "700",
+    fontSize: 20,
+    letterSpacing: 0.5,
+    fontFamily: APP_FONT_FAMILY,
+  },
+  subtitle: {
+    color: "#9CA3AF",
+    fontSize: 12,
+    marginTop: -4,
+    fontFamily: APP_FONT_FAMILY,
   },
   classesWrap: {
     flexDirection: "row",
@@ -112,30 +125,39 @@ const styles = StyleSheet.create({
   },
   classButton: {
     width: "48%",
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderRadius: 12,
+    paddingVertical: 12,
     backgroundColor: "#374151",
     alignItems: "center",
-    gap: 4,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: "transparent",
   },
   selectedClassButton: {
-    backgroundColor: "#0284C7",
+    backgroundColor: "#0C4A6E",
+    borderColor: "#38BDF8",
   },
-  classEmoji: {
-    fontSize: 28,
+  classIconWrap: {
+    width: 52,
+    height: 52,
+    borderRadius: 10,
+    backgroundColor: "#111827",
+    alignItems: "center",
+    justifyContent: "center",
   },
   classText: {
     color: "#E5E7EB",
-    fontWeight: "600",
     fontSize: 12,
+    fontFamily: APP_FONT_FAMILY,
   },
   input: {
-    borderRadius: 10,
+    borderRadius: 12,
     backgroundColor: "#4B5563",
     color: "#FFFFFF",
     paddingHorizontal: 12,
     paddingVertical: 10,
-    fontSize: 18,
+    fontSize: 17,
+    fontFamily: APP_FONT_FAMILY,
   },
   actions: {
     flexDirection: "row",
@@ -155,6 +177,6 @@ const styles = StyleSheet.create({
   },
   actionText: {
     color: "#FFFFFF",
-    fontWeight: "700",
+    fontFamily: APP_FONT_FAMILY,
   },
 });

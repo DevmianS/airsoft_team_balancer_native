@@ -7,7 +7,8 @@ import {
   View,
 } from "react-native";
 import PlayerClassType from "../types/playerClassType";
-import { CLASS_CONFIG } from "../config/classConfig";
+import { APP_FONT_FAMILY } from "../config/fonts";
+import ClassIcon from "./ClassIcon";
 
 interface Props {
   isOpen: boolean;
@@ -27,7 +28,7 @@ export default function ClassSelectionModal({
       <View style={styles.overlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         <View style={styles.card}>
-          <Text style={styles.title}>Select class</Text>
+          <Text style={styles.title}>SELECT CLASS</Text>
           <View style={styles.grid}>
             {Object.values(PlayerClassType).map((classType) => {
               const selected = currentClass === classType;
@@ -40,7 +41,9 @@ export default function ClassSelectionModal({
                     onClose();
                   }}
                 >
-                  <Text style={styles.classIcon}>{CLASS_CONFIG[classType].icon}</Text>
+                  <View style={styles.classIconWrap}>
+                    <ClassIcon classType={classType} size={38} />
+                  </View>
                   <Text style={styles.classLabel}>{classType}</Text>
                 </Pressable>
               );
@@ -63,16 +66,18 @@ const styles = StyleSheet.create({
   card: {
     width: "100%",
     maxWidth: 480,
-    borderRadius: 14,
+    borderRadius: 16,
     backgroundColor: "#1F2937",
-    padding: 16,
+    padding: 18,
     gap: 12,
+    borderWidth: 1,
+    borderColor: "#374151",
   },
   title: {
     color: "#FFFFFF",
     fontSize: 20,
-    fontWeight: "700",
     textAlign: "center",
+    fontFamily: APP_FONT_FAMILY,
   },
   grid: {
     flexDirection: "row",
@@ -82,20 +87,28 @@ const styles = StyleSheet.create({
   },
   classButton: {
     width: "48%",
-    borderRadius: 10,
+    borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",
     backgroundColor: "#374151",
     gap: 6,
+    borderWidth: 1,
+    borderColor: "transparent",
   },
   classButtonSelected: {
-    backgroundColor: "#0369A1",
+    backgroundColor: "#0C4A6E",
+    borderColor: "#38BDF8",
   },
-  classIcon: {
-    fontSize: 34,
+  classIconWrap: {
+    width: 54,
+    height: 54,
+    borderRadius: 10,
+    backgroundColor: "#111827",
+    alignItems: "center",
+    justifyContent: "center",
   },
   classLabel: {
     color: "#E5E7EB",
-    fontWeight: "600",
+    fontFamily: APP_FONT_FAMILY,
   },
 });

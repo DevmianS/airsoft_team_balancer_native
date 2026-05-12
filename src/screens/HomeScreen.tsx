@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   FlatList,
+  Image,
   Pressable,
   SafeAreaView,
   StyleSheet,
@@ -14,9 +15,14 @@ import PlayerCard from "../components/PlayerCard";
 import PlayerType from "../types/playerType";
 import PlayerClassType from "../types/playerClassType";
 import { CLASS_CONFIG } from "../config/classConfig";
+import { APP_FONT_FAMILY } from "../config/fonts";
 import balanceTeams from "../utils/balanceTeams";
 
 const STORAGE_KEY = "players";
+const TEAM_ICON_SOURCE = {
+  CT: require("../../assets/icons/counterterrorists.webp"),
+  T: require("../../assets/icons/terrorists.webp"),
+} as const;
 
 export default function HomeScreen() {
   const [allPlayers, setAllPlayers] = useState<PlayerType[]>([]);
@@ -106,85 +112,93 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.screen}>
-      {!isRandomized ? (
-        <>
-          <View style={styles.topStats}>
-            <Text style={styles.countText}>Players: {allPlayers.length}</Text>
-            <Text style={styles.countText}>Enabled: {enabledPlayersCount}</Text>
-          </View>
-          {allPlayers.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>No players yet</Text>
-              <Pressable style={styles.primaryButton} onPress={() => setShowAddModal(true)}>
-                <Text style={styles.primaryButtonText}>Add new player</Text>
+      <View style={styles.container}>
+        {!isRandomized ? (
+          <>
+            {allPlayers.length > 0 && (
+              <View style={styles.playersCounterBadge}>
+                <Text style={styles.playersCounterValue}>{allPlayers.length}</Text>
+              </View>
+            )}
+
+            {allPlayers.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyText}>Press ADD NEW to add new players</Text>
+              </View>
+            ) : (
+              <FlatList
+                data={sortedPlayers}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={styles.playersListContainer}
+                renderItem={({ item }) => (
+                  <PlayerCard
+                    player={item}
+                    onDelete={onDeletePlayer}
+                    onToggleClass={onToggleClass}
+                    onToggleDisabled={onToggleDisabled}
+                  />
+                )}
+              />
+            )}
+
+            {allPlayers.length > 0 && (
+              <Pressable style={styles.deleteAllFab} onPress={onDeleteAll}>
+                <Text style={styles.fabLabel}>DELETE ALL</Text>
               </Pressable>
-            </View>
-          ) : (
-            <FlatList
-              data={sortedPlayers}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={styles.listContainer}
-              renderItem={({ item }) => (
-                <PlayerCard
-                  player={item}
-                  onDelete={onDeletePlayer}
-                  onToggleClass={onToggleClass}
-                  onToggleDisabled={onToggleDisabled}
+            )}
+
+            {enabledPlayersCount > 0 && allPlayers.length > 1 && (
+              <Pressable style={[styles.mainFab, styles.createTeamsFab]} onPress={onCreateTeams}>
+                <Text style={styles.fabLabel}>CREATE TEAMS</Text>
+              </Pressable>
+            )}
+
+            <Pressable style={[styles.mainFab, styles.addPlayerFab]} onPress={() => setShowAddModal(true)}>
+              <Text style={styles.fabLabel}>ADD NEW</Text>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <View style={styles.teamsSplit}>
+              <View style={[styles.teamColumn, styles.counterColumn]}>
+                <View style={styles.teamHeaderWrap}>
+                  <Image source={TEAM_ICON_SOURCE.CT} style={styles.teamLogo} resizeMode="contain" />
+                  <Text style={styles.teamHeader}>Counter-Terrorists</Text>
+                </View>
+                <Text style={styles.teamMeta}>
+                  {counterTerrorists.length} players / {getTeamPoints(counterTerrorists)} pts
+                </Text>
+                <FlatList
+                  data={counterTerrorists}
+                  keyExtractor={(item) => item.id}
+                  contentContainerStyle={styles.teamListContainer}
+                  renderItem={({ item }) => <PlayerCard player={item} playerTeam="CT" disableActions />}
                 />
-              )}
-            />
-          )}
-          <View style={styles.footerButtons}>
-            <Pressable style={styles.secondaryButton} onPress={() => setShowAddModal(true)}>
-              <Text style={styles.buttonText}>ADD NEW</Text>
+              </View>
+
+              <View style={[styles.teamColumn, styles.terrorColumn]}>
+                <View style={styles.teamHeaderWrap}>
+                  <Image source={TEAM_ICON_SOURCE.T} style={styles.teamLogo} resizeMode="contain" />
+                  <Text style={styles.teamHeader}>Terrorists</Text>
+                </View>
+                <Text style={styles.teamMeta}>
+                  {terrorists.length} players / {getTeamPoints(terrorists)} pts
+                </Text>
+                <FlatList
+                  data={terrorists}
+                  keyExtractor={(item) => item.id}
+                  contentContainerStyle={styles.teamListContainer}
+                  renderItem={({ item }) => <PlayerCard player={item} playerTeam="T" disableActions />}
+                />
+              </View>
+            </View>
+
+            <Pressable style={[styles.mainFab, styles.playersFab]} onPress={() => setIsRandomized(false)}>
+              <Text style={styles.fabLabel}>PLAYERS</Text>
             </Pressable>
-            <Pressable
-              style={[styles.secondaryButton, enabledPlayersCount === 0 && styles.disabledButton]}
-              onPress={onCreateTeams}
-              disabled={enabledPlayersCount === 0}
-            >
-              <Text style={styles.buttonText}>CREATE TEAMS</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.secondaryButton, styles.deleteAllButton]}
-              onPress={onDeleteAll}
-              disabled={allPlayers.length === 0}
-            >
-              <Text style={styles.buttonText}>DELETE ALL</Text>
-            </Pressable>
-          </View>
-        </>
-      ) : (
-        <View style={styles.teamsContainer}>
-          <View style={styles.teamColumn}>
-            <Text style={styles.teamHeader}>Counter-Terrorists</Text>
-            <Text style={styles.teamMeta}>
-              {counterTerrorists.length} players / {getTeamPoints(counterTerrorists)} pts
-            </Text>
-            <FlatList
-              data={counterTerrorists}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={styles.listContainer}
-              renderItem={({ item }) => <PlayerCard player={item} playerTeam="CT" disableActions />}
-            />
-          </View>
-          <View style={styles.teamColumn}>
-            <Text style={styles.teamHeader}>Terrorists</Text>
-            <Text style={styles.teamMeta}>
-              {terrorists.length} players / {getTeamPoints(terrorists)} pts
-            </Text>
-            <FlatList
-              data={terrorists}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={styles.listContainer}
-              renderItem={({ item }) => <PlayerCard player={item} playerTeam="T" disableActions />}
-            />
-          </View>
-          <Pressable style={styles.primaryButton} onPress={() => setIsRandomized(false)}>
-            <Text style={styles.primaryButtonText}>Back to players</Text>
-          </Pressable>
-        </View>
-      )}
+          </>
+        )}
+      </View>
 
       <AddNewPlayer
         visible={showAddModal}
@@ -201,90 +215,138 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#102238",
   },
-  topStats: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+  container: {
+    flex: 1,
   },
-  countText: {
-    color: "#E5E7EB",
-    fontWeight: "700",
+  playersCounterBadge: {
+    position: "absolute",
+    top: 0,
+    alignSelf: "center",
+    minWidth: 64,
+    height: 34,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    backgroundColor: "#0284C7",
+    zIndex: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  playersCounterValue: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontFamily: APP_FONT_FAMILY,
   },
   emptyState: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 28,
   },
   emptyText: {
     color: "#E5E7EB",
-    fontSize: 24,
-    fontWeight: "700",
+    fontSize: 28,
+    textAlign: "center",
+    fontFamily: APP_FONT_FAMILY,
   },
-  listContainer: {
+  playersListContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 12,
+    paddingTop: 48,
+    paddingBottom: 180,
     gap: 10,
   },
-  footerButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 8,
-    padding: 12,
-  },
-  secondaryButton: {
-    flex: 1,
-    borderRadius: 10,
-    alignItems: "center",
-    paddingVertical: 12,
-    backgroundColor: "#0284C7",
-  },
-  deleteAllButton: {
-    backgroundColor: "#DC2626",
-  },
-  primaryButton: {
-    borderRadius: 10,
+  mainFab: {
+    position: "absolute",
+    bottom: 20,
+    width: 92,
+    minHeight: 64,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+  },
+  addPlayerFab: {
+    right: 14,
     backgroundColor: "#0284C7",
+    borderColor: "#38BDF8",
   },
-  disabledButton: {
-    backgroundColor: "#475569",
+  createTeamsFab: {
+    left: 14,
+    backgroundColor: "#0284C7",
+    borderColor: "#38BDF8",
   },
-  buttonText: {
+  deleteAllFab: {
+    position: "absolute",
+    bottom: 20,
+    alignSelf: "center",
+    minWidth: 110,
+    minHeight: 62,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 12,
+    backgroundColor: "#DC2626",
+    borderWidth: 1,
+    borderColor: "#F87171",
+  },
+  playersFab: {
+    right: 14,
+    backgroundColor: "#0284C7",
+    borderColor: "#38BDF8",
+  },
+  fabLabel: {
     color: "#FFFFFF",
-    fontWeight: "700",
-    fontSize: 12,
+    fontSize: 11,
+    letterSpacing: 0.5,
     textAlign: "center",
+    fontFamily: APP_FONT_FAMILY,
   },
-  primaryButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  teamsContainer: {
+  teamsSplit: {
     flex: 1,
-    paddingTop: 8,
-    paddingBottom: 12,
-    gap: 8,
+    flexDirection: "row",
+    paddingBottom: 100,
   },
   teamColumn: {
     flex: 1,
-    gap: 2,
+    gap: 6,
+    paddingTop: 10,
+  },
+  counterColumn: {
+    backgroundColor: "#16375A",
+  },
+  terrorColumn: {
+    backgroundColor: "#6B4A36",
+  },
+  teamHeaderWrap: {
+    marginHorizontal: 10,
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    backgroundColor: "rgba(17,24,39,0.32)",
+  },
+  teamLogo: {
+    width: 22,
+    height: 22,
   },
   teamHeader: {
     color: "#FFFFFF",
-    fontSize: 18,
-    fontWeight: "700",
-    paddingHorizontal: 16,
+    fontSize: 13,
+    textTransform: "uppercase",
+    fontFamily: APP_FONT_FAMILY,
   },
   teamMeta: {
-    color: "#C7D2FE",
-    fontSize: 12,
-    paddingHorizontal: 16,
+    color: "#DBEAFE",
+    fontSize: 11,
+    textAlign: "center",
+    fontFamily: APP_FONT_FAMILY,
+  },
+  teamListContainer: {
+    paddingHorizontal: 8,
+    paddingBottom: 20,
+    gap: 8,
   },
 });
